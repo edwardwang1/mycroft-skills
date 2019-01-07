@@ -28,7 +28,8 @@ class DashboardSkill(MycroftSkill):
         # In this case, respond by simply speaking a canned response.
         # Mycroft will randomly speak one of the lines from the file
         #    dialogs/en-us/hello.world.dialog
-        os.system('python3 ~/Desktop/RPiDashboard/main.py')
+        #os.system('python3 ~/Desktop/RPiDashboard/main.py')
+        import ~/Desktop/RPiDashboard/main.py
         self.speak_dialog("active")
 
 
