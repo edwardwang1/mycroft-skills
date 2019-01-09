@@ -11,6 +11,7 @@ from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill, intent_handler
 from mycroft.util.log import LOG
 import os
+import Pyro4
 
 # Each skill is contained within its own class, which inherits base methods
 # from the MycroftSkill class.  You extend this class as shown below.
@@ -21,24 +22,31 @@ class DashboardSkill(MycroftSkill):
     # The constructor of the skill, which calls MycroftSkill's constructor
     def __init__(self):
         super(DashboardSkill, self).__init__(name="TemplateSkill")
+        with open("~/Desktop/RPiDashboard/uri.txt", 'r') as myfile:
+            self.uri = myfile.read()
         
 
     @intent_handler(IntentBuilder("").require("Dashboard"))
     def handle_hello_world_intent(self, message):
-        os.system('/usr/bin/python3 ~/Desktop/RPiDashboard/main.py')
+        try:
+            app = Pyro4.Proxy(self.uri)
+            app.empty()
+            self.speak_dialog("dashboard.already.active")
+        except:
+            os.system('/usr/bin/python3 ~/Desktop/RPiDashboard/main.py')
+            self.speak_dialog("active")
 
     @intent_handler(IntentBuilder("").require("Background").require("Colour"))
     def handle_change_background_colour_intent(self, message):
-        import Pyro4
 
-        with open("~/Desktop/RPiDashboard/uri.txt", 'r') as myfile:
-            uri = myfile.read()
-
-        app = Pyro4.Proxy(uri)
-        if message.data["Colour"] == "red":
-            app.change_background_to_red()
-        else:
-            app.change_background_to_blue()
+        try:
+            app = Pyro4.Proxy(self.uri)
+            if message.data["Colour"] == "red":
+                app.change_background_to_red()
+            else:
+                app.change_background_to_blue()
+        except:
+            print("Pyro could not create connection")
 
 
     # The "stop" method defines what Mycroft does when told to stop during
