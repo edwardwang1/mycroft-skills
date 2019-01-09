@@ -22,7 +22,7 @@ class DashboardSkill(MycroftSkill):
     # The constructor of the skill, which calls MycroftSkill's constructor
     def __init__(self):
         super(DashboardSkill, self).__init__(name="TemplateSkill")
-        with open("~/Desktop/RPiDashboard/uri.txt", 'r') as myfile:
+        with open("uri.txt", 'r') as myfile:
             self.uri = myfile.read()
         
 
@@ -38,7 +38,6 @@ class DashboardSkill(MycroftSkill):
 
     @intent_handler(IntentBuilder("").require("Background").require("Colour"))
     def handle_change_background_colour_intent(self, message):
-
         try:
             app = Pyro4.Proxy(self.uri)
             if message.data["Colour"] == "red":
