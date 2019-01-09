@@ -31,7 +31,7 @@ class DashboardSkill(MycroftSkill):
     def handle_change_background_colour_intent(self, message):
         import Pyro4
 
-        with open("~/Desktop/RPiDashboard/uri.txt", 'r') as myfile:
+        with open("uri.txt", 'r') as myfile:
             uri = myfile.read()
 
         app = Pyro4.Proxy(uri)
