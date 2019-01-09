@@ -22,30 +22,45 @@ class DashboardSkill(MycroftSkill):
     # The constructor of the skill, which calls MycroftSkill's constructor
     def __init__(self):
         super(DashboardSkill, self).__init__(name="TemplateSkill")
-        with open("uri.txt", 'r') as myfile:
-            self.uri = myfile.read()
+
         
 
     @intent_handler(IntentBuilder("").require("Dashboard"))
     def handle_hello_world_intent(self, message):
-        try:
-            app = Pyro4.Proxy(self.uri)
-            app.empty()
+        with open("uri.txt", 'r') as myfile:
+            uri = myfile.read()
+        if uri.strip():
             self.speak_dialog("dashboard.already.active")
-        except:
+        else:
             os.system('/usr/bin/python3 ~/Desktop/RPiDashboard/main.py')
-            self.speak_dialog("active")
+            #self.speak_dialog("active")
 
     @intent_handler(IntentBuilder("").require("Background").require("Colour"))
     def handle_change_background_colour_intent(self, message):
+        with open("uri.txt", 'r') as myfile:
+            uri = myfile.read()
         try:
-            app = Pyro4.Proxy(self.uri)
+            app = Pyro4.Proxy(uri)
             if message.data["Colour"] == "red":
                 app.change_background_to_red()
             else:
                 app.change_background_to_blue()
         except:
             print("Pyro could not create connection")
+    
+    @intent_handler(IntentBuilder("").require("Close").require("Dashboard"))        
+    def close_dashboard_intent(self, message):
+        with open("uri.txt", 'r') as myfile:
+            uri = myfile.read()
+        app = Pyro4.Proxy(uri)
+        app.shutdown()
+        app._pyroRelease()
+
+    @intent_handler(IntentBuilder("").require("Reset").require("Dashboard"))        
+    def reset_intent(self, message):
+        text_file = open("uri.txt", "w")
+        text_file.write("")
+        text_file.close()   
 
 
     # The "stop" method defines what Mycroft does when told to stop during
