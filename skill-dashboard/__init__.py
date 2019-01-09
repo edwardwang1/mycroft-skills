@@ -25,10 +25,20 @@ class DashboardSkill(MycroftSkill):
 
     @intent_handler(IntentBuilder("").require("Dashboard"))
     def handle_hello_world_intent(self, message):
-        # In this case, respond by simply speaking a canned response.
-        # Mycroft will randomly speak one of the lines from the file
-        #    dialogs/en-us/hello.world.dialog
         os.system('/usr/bin/python3 ~/Desktop/RPiDashboard/main.py')
+
+    @intent_handler(IntentBuilder("").require("Background").require("Colour"))
+    def handle_change_background_colour_intent(self, message):
+        import Pyro4
+
+        with open("~/Desktop/RPiDashboard/uri.txt", 'r') as myfile:
+            uri = myfile.read()
+
+        app = Pyro4.Proxy(uri)
+        if message.data["Colour"] == "red":
+            app.change_background_to_red()
+        else:
+            app.change_background_to_blue()
 
 
     # The "stop" method defines what Mycroft does when told to stop during
