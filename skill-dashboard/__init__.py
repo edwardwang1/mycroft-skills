@@ -21,12 +21,12 @@ class DashboardSkill(MycroftSkill):
 
     # The constructor of the skill, which calls MycroftSkill's constructor
     def __init__(self):
-        super(DashboardSkill, self).__init__(name="TemplateSkill")
+        super(DashboardSkill, self).__init__(name="Dashboard")
 
         
 
-    @intent_handler(IntentBuilder("").require("Dashboard"))
-    def handle_hello_world_intent(self, message):
+    @intent_handler(IntentBuilder("").require("Open").require("Dashboard"))
+    def handle_dashboard_control_itnent(self, message):
         with open("uri.txt", 'r') as myfile:
             uri = myfile.read()
         if uri.strip():
